@@ -37,7 +37,7 @@ var Engine = (function(global) {
          * requires smooth animation. Because everyone's computer processes
          * instructions at different speeds we need a constant value that
          * would be the same for everyone (regardless of how fast their
-         * computer is) - hurray time!
+         * computer is) - Thank God for time!
          */
         var now = Date.now(),
             dt = (now - lastTime) / 1000.0;
