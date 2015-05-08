@@ -29,12 +29,60 @@ var player = function() {
     this.sprite = 'images/char-boy.png';
 }
 
-player.prototype.update = function(dt)  {
-    console.log("It works!")
+player.prototype.update = function(dt) {
+    //console.log("It works!");
 }
 
-player.prototype.render = function() {
+var playerX = 200;
+var playerY = 400;
 
+player.prototype.render = function(playerX, playerY) {
+    ctx.drawImage(Resources.get(this.sprite), playerX, playerY);
+}
+
+player.prototype.handleInput = function(key) {
+
+    // Flag to put variables back if we hit the edge of the board.
+    var flag = false;
+
+    // Get where the player was before key press.
+    oldPlayerX = playerX;
+    oldPlayerY = playerY;
+    switch(key) {
+        case "left":
+            playerX = playerX - 101;
+            if (playerX < 0)  {
+                // If at edge, reset player position and set flag to true.
+                playerX = 0;
+                flag = true;
+            }
+            break;
+        case "right":
+            playerX = playerX + 101;
+            if (playerX > 400)  {
+                // If at edge, reset player position and set flag to true.
+                playerX = 400;
+                flag = true;
+            }
+            break;
+        case "up":
+            playerY = playerY - 83;
+            if (playerY < 0)  {
+                // If at edge, reset player position and set flag to true.
+                playerY = 400;
+                flag = true;
+            }
+            break;
+        case "down":
+            playerY = playerY + 83;
+            if (playerY > 400)  {
+                // If at edge, reset player position and set flag to true.
+                playerY = 400;
+                flag = true;
+            }
+            break;
+    }
+    // If flag is set, the player did not move.
 }
 
 // Now instantiate your objects.
@@ -42,8 +90,7 @@ player.prototype.render = function() {
 // Place the player object in a variable called player
 
 var allEnemies = [];
-
-var me = new player();
+var me = new player;
 
 
 
@@ -57,5 +104,5 @@ document.addEventListener('keyup', function(e) {
         40: 'down'
     };
 
-    player.handleInput(allowedKeys[e.keyCode]);
+    me.handleInput(allowedKeys[e.keyCode]);
 });
