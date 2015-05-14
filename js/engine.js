@@ -39,8 +39,8 @@ var Engine = (function(global) {
          * would be the same for everyone (regardless of how fast their
          * computer is) - Thank God for time!
          */
-        var now = Date.now(),
-            dt = (now - lastTime) / 1000.0;
+        var now =  Date.now(),
+            dt  = (now - lastTime) / 1000.0;
 
         /* Call our update/render functions, pass along the time delta to
          * our update function since it may be used for smooth animation.
@@ -80,7 +80,7 @@ var Engine = (function(global) {
      */
     function update(dt) {
         updateEntities(dt);
-        // checkCollisions();
+        checkCollisions();
     }
 
     /* This is called by the update function  and loops through all of the
@@ -97,6 +97,18 @@ var Engine = (function(global) {
 
 
         me.update();
+    }
+
+    function checkCollisions()  {
+        allEnemies.forEach(function(enemy){
+            if ((enemy.x + 101) - playerX < 20 && (enemy.x + 101) - playerX > 0) {
+                if (enemy.row == playerRow){
+                    playerY = 404;
+                    playerX = 202;
+                    playerRow = 4;
+                }
+            }
+        });
     }
 
     /* This function initially draws the "game level", it will then call

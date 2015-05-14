@@ -6,7 +6,19 @@ var Enemy = function() {
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
+    this.x = -99;
+
+    this.row = Math.floor(Math.random() * 3);
+    this.y = 60 // offset
+                + (83 // size of image
+                      * this.row // zero based row
+                                );
+    this.speed = Math.floor(((maxX - minX) + 1) * Math.random()) + 200;
+
 }
+
+var maxX = 500;
+var minX = 100;
 
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
@@ -15,10 +27,21 @@ Enemy.prototype.update = function(dt) {
     // which will ensure the game runs at the same speed for
     // all computers.
 
+    this.x += this.speed * dt;
+
+    ind = allEnemies.indexOf(this);
+    if (allEnemies.length < 3){
+        allEnemies.push(new Enemy());
+    }
+    if (this.x > 505){
+        allEnemies.splice(ind, 1);
+        allEnemies.push(new Enemy());
+    }
+
 }
 
 // Draw the enemy on the screen, required method for game
-Enemy.prototype.render = function() {
+Enemy.prototype.render = function(row) {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 }
 
@@ -33,66 +56,58 @@ player.prototype.update = function(dt) {
     //console.log("It works!");
 }
 
-var playerX = 200;
-var playerY = 400;
+var playerX = 202;
+var playerY = 404;
+var playerRow = 4;
 
-player.prototype.render = function(playerX, playerY) {
+player.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), playerX, playerY);
 }
 
 player.prototype.handleInput = function(key) {
-
-    // Flag to put variables back if we hit the edge of the board.
-    var flag = false;
-
-    // Get where the player was before key press.
-    oldPlayerX = playerX;
-    oldPlayerY = playerY;
     switch(key) {
         case "left":
-            playerX = playerX - 101;
+            playerX -= 101;
             if (playerX < 0)  {
-                // If at edge, reset player position and set flag to true.
+                // If at edge, reset player position.
                 playerX = 0;
-                flag = true;
             }
             break;
         case "right":
-            playerX = playerX + 101;
-            if (playerX > 400)  {
-                // If at edge, reset player position and set flag to true.
-                playerX = 400;
-                flag = true;
+            playerX += 101;
+            if (playerX > 404)  {
+                // If at edge, reset player position.
+                playerX = 404;
             }
             break;
         case "up":
-            playerY = playerY - 83;
+            playerY -= 83;
+            playerRow -= 1;
             if (playerY < 0)  {
-                // If at edge, reset player position and set flag to true.
-                playerY = 400;
-                flag = true;
+                // If at edge, reset player position to beginning of game.
+                playerY = 404;
+                playerX = 202;
+                playerRow = 4;
             }
             break;
         case "down":
-            playerY = playerY + 83;
-            if (playerY > 400)  {
-                // If at edge, reset player position and set flag to true.
-                playerY = 400;
-                flag = true;
+            playerY += 83;
+            playerRow += 1;
+            if (playerY > 404)  {
+                // If at edge, reset player position.
+                playerY = 404;
+                playerRow = 4;
             }
             break;
     }
-    // If flag is set, the player did not move.
 }
 
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
 
-var allEnemies = [];
-var me = new player;
-
-
+var allEnemies = [new Enemy()];
+var me = new player();
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
