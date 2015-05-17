@@ -100,7 +100,7 @@ var Engine = (function(global) {
      */
     function update(dt) {
         updateEntities(dt);
-        checkCollisions();
+        //checkCollisions();
     }
 
     /* This is called by the update function  and loops through all of the
@@ -119,7 +119,7 @@ var Engine = (function(global) {
         //me.update();
     }
 
-    function checkCollisions()  {
+    /*function checkCollisions()  {
         allEnemies.forEach(function(enemy){
             if (enemy.x - playerX < 101 && enemy.x - playerX > 0) {
                 if (enemy.row == playerRow){
@@ -130,7 +130,7 @@ var Engine = (function(global) {
                 }
             }
         });
-    }
+    } */
 
     /* This function initially draws the "game level", it will then call
      * the renderEntities function. Remember, this function is called every
@@ -186,7 +186,7 @@ var Engine = (function(global) {
             enemy.render();
         });
 
-        me.render(playerX, playerY);
+        me.render(playerColumn, playerY);
     }
 
     /* This function does nothing but it could have been a good place to

@@ -60,19 +60,19 @@ var playerY = constants['starting.playerY'];
 var playerRow = constants['starting.playerRow'];
 
 player.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), playerX, playerY);
+    ctx.drawImage(Resources.get(this.sprite), playerColumn, playerY);
 }
 
 player.prototype.handleInput = function(key) {
     switch(key) {
         case "left":
             if (playerColumn > 0)  {
-            playerColumn -= 1;
+                playerColumn -= 1;
             }
             break;
         case "right":
             if (playerColumn < constants['canvas.numColumns']) {
-            playerColumn += 1;
+                playerColumn += 1;
             }
             break;
         case "up":
@@ -80,7 +80,7 @@ player.prototype.handleInput = function(key) {
             playerRow -= 1;
             if (playerY < 0)  {
                 // If at edge, reset player position to beginning of game.
-                playerX = constants['starting.playerX'];
+                playerColumn = Math.ceil(constants['canvas.numColumns'] / 2) * constants['columnWidth'];
                 playerY = constants['starting.playerY'];
                 playerRow = constants['starting.playerRow'];
             }
