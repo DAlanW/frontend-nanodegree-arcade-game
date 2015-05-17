@@ -13,12 +13,9 @@ var Enemy = function() {
                 + (83 // size of image
                       * this.row // zero based row
                                 );
-    this.speed = Math.floor(((maxX - minX) + 1) * Math.random()) + 200;
+    this.speed = Math.floor(((constants['enemy.maxSpeed'] - constants['enemy.minSpeed']) + 1) * Math.random()) + 100;
 
 }
-
-var maxX = 500;
-var minX = 100;
 
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
@@ -33,7 +30,7 @@ Enemy.prototype.update = function(dt) {
     if (allEnemies.length < 3){
         allEnemies.push(new Enemy());
     }
-    if (this.x > 505){
+    if (this.x > constants['canvas.columnWidth'] * constants['canvas.numColumns']){
         allEnemies.splice(ind, 1);
         allEnemies.push(new Enemy());
     }
@@ -52,13 +49,15 @@ var player = function() {
     this.sprite = 'images/char-boy.png';
 }
 
-player.prototype.update = function(dt) {
+//player.prototype.update = function(dt) {
     //console.log("It works!");
-}
+//}
 
-var playerX = 202;
-var playerY = 404;
-var playerRow = 4;
+var playerColumn = Math.ceil(constants['canvas.numColumns'] / 2) * constants['columnWidth'];
+
+//var playerX = constants['starting.playerX'];
+var playerY = constants['starting.playerY'];
+var playerRow = constants['starting.playerRow'];
 
 player.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), playerX, playerY);
@@ -67,17 +66,13 @@ player.prototype.render = function() {
 player.prototype.handleInput = function(key) {
     switch(key) {
         case "left":
-            playerX -= 101;
-            if (playerX < 0)  {
-                // If at edge, reset player position.
-                playerX = 0;
+            if (playerColumn > 0)  {
+            playerColumn -= 1;
             }
             break;
         case "right":
-            playerX += 101;
-            if (playerX > 404)  {
-                // If at edge, reset player position.
-                playerX = 404;
+            if (playerColumn < constants['canvas.numColumns']) {
+            playerColumn += 1;
             }
             break;
         case "up":
@@ -85,9 +80,9 @@ player.prototype.handleInput = function(key) {
             playerRow -= 1;
             if (playerY < 0)  {
                 // If at edge, reset player position to beginning of game.
-                playerY = 404;
-                playerX = 202;
-                playerRow = 4;
+                playerX = constants['starting.playerX'];
+                playerY = constants['starting.playerY'];
+                playerRow = constants['starting.playerRow'];
             }
             break;
         case "down":
@@ -96,7 +91,7 @@ player.prototype.handleInput = function(key) {
             if (playerY > 404)  {
                 // If at edge, reset player position.
                 playerY = 404;
-                playerRow = 4;
+                playerRow = constants['starting.playerRow'];
             }
             break;
     }
