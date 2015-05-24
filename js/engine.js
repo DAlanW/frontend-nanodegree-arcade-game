@@ -14,26 +14,36 @@
  * a little simpler to work with.
  */
 
-
-
 var Engine = (function(global) {
-
+    // Changes to these constants will affect the entire game. Future iterations
+    // of the game could have "constants" interchange for new levels, adding new
+    // enemies, etc.
     constants = {
 
-        //Choose size of the canvas//
-        'canvas.height':        606,
+        'canvas.rowHeight':     83,
         'canvas.columnWidth':   101,
+        'canvas.padding':       94,
 
         'canvas.numRows':       6,
         'canvas.numColumns':    7,
 
-        'starting.playerX':     202,
-        'starting.playerY':     404,
-        'starting.playerRow':   4,
-
+        'enemy.numEnemies':     1,
         'enemy.maxSpeed':       500,
         'enemy.minSpeed':       100,
+        'enemy.start':          -99,
+        'enemy.offset':         60,
+        'enemy.dangerZone!':    90,
+
+        'player.offset':        93,
     }
+
+    constants['canvas.width'] = constants['canvas.columnWidth'] * constants['canvas.numColumns'];
+    // Height calculated using height of rows multiplied by the number of rows,
+    // plus additional space to offset the block images' white space.
+    constants['canvas.height'] = constants['canvas.rowHeight'] * constants['canvas.numRows'] + constants['canvas.padding'];
+
+    constants['player.startingColumn'] = Math.floor(constants['canvas.numColumns'] / 2);
+    constants['player.startingRow'] = constants['canvas.numRows'];
 
     /* Predefine the variables we'll be using within this scope,
      * create the canvas element, grab the 2D context for that canvas
@@ -45,7 +55,7 @@ var Engine = (function(global) {
         ctx = canvas.getContext('2d'),
         lastTime;
 
-    canvas.width = constants['canvas.columnWidth'] * constants['canvas.numColumns'];
+    canvas.width = constants['canvas.width'];
     canvas.height = constants['canvas.height'];
     doc.body.appendChild(canvas);
 
@@ -100,7 +110,7 @@ var Engine = (function(global) {
      */
     function update(dt) {
         updateEntities(dt);
-        //checkCollisions();
+        checkCollisions();
     }
 
     /* This is called by the update function  and loops through all of the
@@ -114,23 +124,24 @@ var Engine = (function(global) {
         allEnemies.forEach(function(enemy) {
             enemy.update(dt);
         });
-
-
-        //me.update();
     }
 
-    /*function checkCollisions()  {
+    /*  For every enemy, check to see if the player is in the same row. If so, check the distance
+        between the enemy and the player. If they are within a given range, notify player of the
+        "death," and reset the player's starting coordinates.*/
+    function checkCollisions()  {
         allEnemies.forEach(function(enemy){
-            if (enemy.x - playerX < 101 && enemy.x - playerX > 0) {
-                if (enemy.row == playerRow){
-                    confirm("You are dead!");
-                    playerY = constants['starting.playerY'];
-                    playerX = constants['starting.playerX'];
-                    playerRow = constants['starting.playerRow'];
+            if (enemy.row == player.playerRow)  {
+                if (Math.abs(player.pixelX - enemy.x) < constants['enemy.dangerZone!']){
+                        confirm ("You are dead!");
+                        player.playerColumn = Math.floor(constants['canvas.numColumns'] / 2);
+                        player.playerRow = constants['canvas.numRows'];
+                        player.calcX();
+                        player.calcY();
                 }
             }
         });
-    } */
+    }
 
     /* This function initially draws the "game level", it will then call
      * the renderEntities function. Remember, this function is called every
@@ -167,7 +178,7 @@ var Engine = (function(global) {
                  * so that we get the benefits of caching these images, since
                  * we're using them over and over.
                  */
-                ctx.drawImage(Resources.get(rowImages[row]), col * 101, row * 83);
+                ctx.drawImage(Resources.get(rowImages[row]), col * constants['canvas.columnWidth'], row * constants['canvas.rowHeight']);
             }
         }
 
@@ -185,8 +196,7 @@ var Engine = (function(global) {
         allEnemies.forEach(function(enemy) {
             enemy.render();
         });
-
-        me.render(playerColumn, playerY);
+        player.render();
     }
 
     /* This function does nothing but it could have been a good place to

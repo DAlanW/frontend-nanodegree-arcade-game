@@ -6,13 +6,18 @@ var Enemy = function() {
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
-    this.x = -99;
 
-    this.row = Math.floor(Math.random() * 3);
-    this.y = 60 // offset
-                + (83 // size of image
-                      * this.row // zero based row
-                                );
+    //  The enemy always begins off-screen.
+    this.x = constants['enemy.start'];
+
+    //  Randomly choose a row to begin on.
+    this.randomRow = Math.floor(Math.random() * 3);
+    //  Allows for comparison with the player's row.
+    this.row = this.randomRow + 2;
+
+    this.y = constants['enemy.offset'] + (constants['canvas.rowHeight'] * this.randomRow);
+
+    // The speed will vary between the range set in "constants.""
     this.speed = Math.floor(((constants['enemy.maxSpeed'] - constants['enemy.minSpeed']) + 1) * Math.random()) + 100;
 
 }
@@ -27,9 +32,14 @@ Enemy.prototype.update = function(dt) {
     this.x += this.speed * dt;
 
     ind = allEnemies.indexOf(this);
-    if (allEnemies.length < 3){
+
+    //  The number of enemies in "allEnemies" is made equal to the number of enemies set in "constants."
+    if (allEnemies.length < constants['enemy.numEnemies']){
         allEnemies.push(new Enemy());
     }
+
+    //  When the enemy moves off of the visible board, it is removed from the "allEnemies" array
+    //  and a brand new enemy is "spawned" in its place.
     if (this.x > constants['canvas.columnWidth'] * constants['canvas.numColumns']){
         allEnemies.splice(ind, 1);
         allEnemies.push(new Enemy());
@@ -38,60 +48,71 @@ Enemy.prototype.update = function(dt) {
 }
 
 // Draw the enemy on the screen, required method for game
-Enemy.prototype.render = function(row) {
+Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 }
 
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
-var player = function() {
+var Player = function() {
     this.sprite = 'images/char-boy.png';
+    this.playerColumn = constants['player.startingColumn'];
+    //  The player's row can be compared with the enemy's row for the "checkCollisions" function.
+    this.playerRow = constants['player.startingRow'];
 }
 
-//player.prototype.update = function(dt) {
-    //console.log("It works!");
-//}
-
-var playerColumn = Math.ceil(constants['canvas.numColumns'] / 2) * constants['columnWidth'];
-
-//var playerX = constants['starting.playerX'];
-var playerY = constants['starting.playerY'];
-var playerRow = constants['starting.playerRow'];
-
-player.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), playerColumn, playerY);
+Player.prototype.calcX = function () {
+    this.pixelX = this.playerColumn * constants['canvas.columnWidth'];
 }
 
-player.prototype.handleInput = function(key) {
+Player.prototype.calcY = function () {
+    this.pixelY = (this.playerRow * constants['canvas.rowHeight']) - constants['player.offset'];
+}
+
+Player.prototype.render = function() {
+    // The player's position is calculated and rendered.
+    this.calcX();
+    this.calcY();
+    ctx.drawImage(Resources.get(this.sprite), this.pixelX, this.pixelY);
+}
+
+Player.prototype.handleInput = function(key) {
     switch(key) {
+        //  The player can never exceed the left-most side, the right-most side,
+        //  or the bottom side of the screen and therefore can never move off-screen.
         case "left":
-            if (playerColumn > 0)  {
-                playerColumn -= 1;
+            if (this.playerColumn > 0)  {
+                this.playerColumn -= 1;
+                this.calcX();
             }
             break;
         case "right":
-            if (playerColumn < constants['canvas.numColumns']) {
-                playerColumn += 1;
+            if (this.playerColumn < constants['canvas.numColumns'] - 1) {
+                this.playerColumn += 1;
+                this.calcX();
             }
             break;
         case "up":
-            playerY -= 83;
-            playerRow -= 1;
-            if (playerY < 0)  {
-                // If at edge, reset player position to beginning of game.
-                playerColumn = Math.ceil(constants['canvas.numColumns'] / 2) * constants['columnWidth'];
-                playerY = constants['starting.playerY'];
-                playerRow = constants['starting.playerRow'];
+            if (this.playerRow > 2)  {
+                this.playerRow -= 1;
+                this.calcY();
+            } else {
+                //  If the player makes it to the "finish line," a congradulatory message will appear,
+                //  indicating the number of enemies there were on the board at the win, and then increasing
+                //  the number for the next "round." The player will also be reset.
+                confirm("You've won! Congratulations!\n\nEnemy count was: " + constants['enemy.numEnemies']++
+                    + ".\nEnemy count will now be: " + constants['enemy.numEnemies'] + ".");
+                this.playerColumn = Math.floor(constants['canvas.numColumns'] / 2);
+                this.playerRow = constants['canvas.numRows'];
+                this.calcX();
+                this.calcY();
             }
             break;
         case "down":
-            playerY += 83;
-            playerRow += 1;
-            if (playerY > 404)  {
-                // If at edge, reset player position.
-                playerY = 404;
-                playerRow = constants['starting.playerRow'];
+            if (this.playerRow < constants['canvas.numRows']){
+                this.playerRow += 1;
+                this.calcY();
             }
             break;
     }
@@ -101,8 +122,9 @@ player.prototype.handleInput = function(key) {
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
 
+// Always start with one enemy.
 var allEnemies = [new Enemy()];
-var me = new player();
+var player = new Player();
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
@@ -114,5 +136,5 @@ document.addEventListener('keyup', function(e) {
         40: 'down'
     };
 
-    me.handleInput(allowedKeys[e.keyCode]);
+    player.handleInput(allowedKeys[e.keyCode]);
 });
