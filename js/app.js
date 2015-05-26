@@ -20,7 +20,7 @@ var Enemy = function() {
     // The speed will vary between the range set in "constants.""
     this.speed = Math.floor(((constants['enemy.maxSpeed'] - constants['enemy.minSpeed']) + 1) * Math.random()) + 100;
 
-}
+};
 
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
@@ -45,12 +45,12 @@ Enemy.prototype.update = function(dt) {
         allEnemies.push(new Enemy());
     }
 
-}
+};
 
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-}
+};
 
 // Now write your own player class
 // This class requires an update(), render() and
@@ -60,22 +60,22 @@ var Player = function() {
     this.playerColumn = constants['player.startingColumn'];
     //  The player's row can be compared with the enemy's row for the "checkCollisions" function.
     this.playerRow = constants['player.startingRow'];
-}
+};
 
 Player.prototype.calcX = function () {
     this.pixelX = this.playerColumn * constants['canvas.columnWidth'];
-}
+};
 
 Player.prototype.calcY = function () {
     this.pixelY = (this.playerRow * constants['canvas.rowHeight']) - constants['player.offset'];
-}
+};
 
 Player.prototype.render = function() {
     // The player's position is calculated and rendered.
     this.calcX();
     this.calcY();
     ctx.drawImage(Resources.get(this.sprite), this.pixelX, this.pixelY);
-}
+};
 
 Player.prototype.handleInput = function(key) {
     switch(key) {
@@ -116,7 +116,7 @@ Player.prototype.handleInput = function(key) {
             }
             break;
     }
-}
+};
 
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
