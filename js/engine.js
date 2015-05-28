@@ -134,10 +134,7 @@ var Engine = (function(global) {
             if (enemy.row == player.playerRow)  {
                 if (Math.abs(player.pixelX - enemy.x) < constants['enemy.dangerZone!']){
                         confirm ("You are dead!");
-                        player.playerColumn = Math.floor(constants['canvas.numColumns'] / 2);
-                        player.playerRow = constants['canvas.numRows'];
-                        player.calcX();
-                        player.calcY();
+                        player.reset();
                 }
             }
         });

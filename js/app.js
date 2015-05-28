@@ -77,6 +77,13 @@ Player.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.pixelX, this.pixelY);
 };
 
+Player.prototype.reset = function()  {
+    this.playerColumn = Math.floor(constants['canvas.numColumns'] / 2);
+    this.playerRow = constants['canvas.numRows'];
+    this.calcX();
+    this.calcY();
+};
+
 Player.prototype.handleInput = function(key) {
     switch(key) {
         //  The player can never exceed the left-most side, the right-most side,
@@ -103,10 +110,7 @@ Player.prototype.handleInput = function(key) {
                 //  the number for the next "round." The player will also be reset.
                 confirm("You've won! Congratulations!\n\nEnemy count was: " + constants['enemy.numEnemies']++
                     + ".\nEnemy count will now be: " + constants['enemy.numEnemies'] + ".");
-                this.playerColumn = Math.floor(constants['canvas.numColumns'] / 2);
-                this.playerRow = constants['canvas.numRows'];
-                this.calcX();
-                this.calcY();
+                this.reset();
             }
             break;
         case "down":
