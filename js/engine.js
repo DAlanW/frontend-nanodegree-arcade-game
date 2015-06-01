@@ -13,12 +13,13 @@
  * the canvas' context (ctx) object globally available to make writing app.js
  * a little simpler to work with.
  */
+ "use strict";
 
 var Engine = (function(global) {
     // Changes to these constants will affect the entire game. Future iterations
     // of the game could have "constants" interchange for new levels, adding new
     // enemies, etc.
-    constants = {
+    var constants = {
 
         'canvas.rowHeight':     83,
         'canvas.columnWidth':   101,
@@ -34,16 +35,16 @@ var Engine = (function(global) {
         'enemy.offset':         60,
         'enemy.dangerZone!':    90,
 
-        'player.offset':        93,
-    }
+        'player.offset':        93
+    };
 
-    constants['canvas.width'] = constants['canvas.columnWidth'] * constants['canvas.numColumns'];
+    var constants['canvas.width'] = constants['canvas.columnWidth'] * constants['canvas.numColumns'];
     // Height calculated using height of rows multiplied by the number of rows,
     // plus additional space to offset the block images' white space.
-    constants['canvas.height'] = constants['canvas.rowHeight'] * constants['canvas.numRows'] + constants['canvas.padding'];
+        constants['canvas.height'] = constants['canvas.rowHeight'] * constants['canvas.numRows'] + constants['canvas.padding'];
 
-    constants['player.startingColumn'] = Math.floor(constants['canvas.numColumns'] / 2);
-    constants['player.startingRow'] = constants['canvas.numRows'];
+        constants['player.startingColumn'] = Math.floor(constants['canvas.numColumns'] / 2);
+        constants['player.startingRow'] = constants['canvas.numRows'];
 
     /* Predefine the variables we'll be using within this scope,
      * create the canvas element, grab the 2D context for that canvas
