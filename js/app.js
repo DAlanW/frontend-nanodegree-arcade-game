@@ -8,17 +8,17 @@ var Enemy = function() {
     this.sprite = 'images/enemy-bug.png';
 
     //  The enemy always begins off-screen.
-    this.x = constants['enemy.start'];
+    this.x = CONSTANTS['enemy.start'];
 
     //  Randomly choose a row to begin on.
     this.randomRow = Math.floor(Math.random() * 3);
     //  Allows for comparison with the player's row.
     this.row = this.randomRow + 2;
 
-    this.y = constants['enemy.offset'] + (constants['canvas.rowHeight'] * this.randomRow);
+    this.y = CONSTANTS['enemy.offset'] + (CONSTANTS['canvas.rowHeight'] * this.randomRow);
 
-    // The speed will vary between the range set in "constants.""
-    this.speed = Math.floor(((constants['enemy.maxSpeed'] - constants['enemy.minSpeed']) + 1) * Math.random()) + 100;
+    // The speed will vary between the range set in "CONSTANTS.""
+    this.speed = Math.floor(((CONSTANTS['enemy.maxSpeed'] - CONSTANTS['enemy.minSpeed']) + 1) * Math.random()) + 100;
 
 };
 
@@ -33,14 +33,14 @@ Enemy.prototype.update = function(dt) {
 
     ind = allEnemies.indexOf(this);
 
-    //  The number of enemies in "allEnemies" is made equal to the number of enemies set in "constants."
-    if (allEnemies.length < constants['enemy.numEnemies']){
+    //  The number of enemies in "allEnemies" is made equal to the number of enemies set in "CONSTANTS."
+    if (allEnemies.length < CONSTANTS['enemy.numEnemies']){
         allEnemies.push(new Enemy());
     }
 
     //  When the enemy moves off of the visible board, it is removed from the "allEnemies" array
     //  and a brand new enemy is "spawned" in its place.
-    if (this.x > constants['canvas.columnWidth'] * constants['canvas.numColumns']){
+    if (this.x > CONSTANTS['canvas.columnWidth'] * CONSTANTS['canvas.numColumns']){
         allEnemies.splice(ind, 1);
         allEnemies.push(new Enemy());
     }
@@ -57,17 +57,17 @@ Enemy.prototype.render = function() {
 // a handleInput() method.
 var Player = function() {
     this.sprite = 'images/char-boy.png';
-    this.playerColumn = constants['player.startingColumn'];
+    this.playerColumn = CONSTANTS['player.startingColumn'];
     //  The player's row can be compared with the enemy's row for the "checkCollisions" function.
-    this.playerRow = constants['player.startingRow'];
+    this.playerRow = CONSTANTS['player.startingRow'];
 };
 
 Player.prototype.calcX = function () {
-    this.pixelX = this.playerColumn * constants['canvas.columnWidth'];
+    this.pixelX = this.playerColumn * CONSTANTS['canvas.columnWidth'];
 };
 
 Player.prototype.calcY = function () {
-    this.pixelY = (this.playerRow * constants['canvas.rowHeight']) - constants['player.offset'];
+    this.pixelY = (this.playerRow * CONSTANTS['canvas.rowHeight']) - CONSTANTS['player.offset'];
 };
 
 Player.prototype.render = function() {
@@ -78,8 +78,8 @@ Player.prototype.render = function() {
 };
 
 Player.prototype.reset = function()  {
-    this.playerColumn = Math.floor(constants['canvas.numColumns'] / 2);
-    this.playerRow = constants['canvas.numRows'];
+    this.playerColumn = Math.floor(CONSTANTS['canvas.numColumns'] / 2);
+    this.playerRow = CONSTANTS['canvas.numRows'];
     this.calcX();
     this.calcY();
 };
@@ -95,7 +95,7 @@ Player.prototype.handleInput = function(key) {
             }
             break;
         case "right":
-            if (this.playerColumn < constants['canvas.numColumns'] - 1) {
+            if (this.playerColumn < CONSTANTS['canvas.numColumns'] - 1) {
                 this.playerColumn += 1;
                 this.calcX();
             }
@@ -108,13 +108,13 @@ Player.prototype.handleInput = function(key) {
                 //  If the player makes it to the "finish line," a congradulatory message will appear,
                 //  indicating the number of enemies there were on the board at the win, and then increasing
                 //  the number for the next "round." The player will also be reset.
-                confirm("You've won! Congratulations!\n\nEnemy count was: " + constants['enemy.numEnemies']++
-                    + ".\nEnemy count will now be: " + constants['enemy.numEnemies'] + ".");
+                confirm("You've won! Congratulations!\n\nEnemy count was: " + CONSTANTS['enemy.numEnemies']++
+                    + ".\nEnemy count will now be: " + CONSTANTS['enemy.numEnemies'] + ".");
                 this.reset();
             }
             break;
         case "down":
-            if (this.playerRow < constants['canvas.numRows']){
+            if (this.playerRow < CONSTANTS['canvas.numRows']){
                 this.playerRow += 1;
                 this.calcY();
             }

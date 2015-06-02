@@ -13,38 +13,40 @@
  * the canvas' context (ctx) object globally available to make writing app.js
  * a little simpler to work with.
  */
- "use strict";
+"use strict";
+
+var CONSTANTS = {
+
+    'canvas.rowHeight':     83,
+    'canvas.columnWidth':   101,
+    'canvas.padding':       94,
+
+    'canvas.numRows':       6,
+    'canvas.numColumns':    7,
+
+    'enemy.numEnemies':     1,
+    'enemy.maxSpeed':       500,
+    'enemy.minSpeed':       100,
+    'enemy.start':          -99,
+    'enemy.offset':         60,
+    'enemy.dangerZone!':    90,
+
+    'player.offset':        93
+};
 
 var Engine = (function(global) {
-    // Changes to these constants will affect the entire game. Future iterations
-    // of the game could have "constants" interchange for new levels, adding new
+    // Changes to these CONSTANTS will affect the entire game. Future iterations
+    // of the game could have "CONSTANTS" interchange for new levels, adding new
     // enemies, etc.
-    var constants = {
 
-        'canvas.rowHeight':     83,
-        'canvas.columnWidth':   101,
-        'canvas.padding':       94,
 
-        'canvas.numRows':       6,
-        'canvas.numColumns':    7,
-
-        'enemy.numEnemies':     1,
-        'enemy.maxSpeed':       500,
-        'enemy.minSpeed':       100,
-        'enemy.start':          -99,
-        'enemy.offset':         60,
-        'enemy.dangerZone!':    90,
-
-        'player.offset':        93
-    };
-
-    var constants['canvas.width'] = constants['canvas.columnWidth'] * constants['canvas.numColumns'];
+    CONSTANTS['canvas.width'] = CONSTANTS['canvas.columnWidth'] * CONSTANTS['canvas.numColumns'];
     // Height calculated using height of rows multiplied by the number of rows,
     // plus additional space to offset the block images' white space.
-        constants['canvas.height'] = constants['canvas.rowHeight'] * constants['canvas.numRows'] + constants['canvas.padding'];
+    CONSTANTS['canvas.height'] = CONSTANTS['canvas.rowHeight'] * CONSTANTS['canvas.numRows'] + CONSTANTS['canvas.padding'];
 
-        constants['player.startingColumn'] = Math.floor(constants['canvas.numColumns'] / 2);
-        constants['player.startingRow'] = constants['canvas.numRows'];
+    CONSTANTS['player.startingColumn'] = Math.floor(CONSTANTS['canvas.numColumns'] / 2);
+    CONSTANTS['player.startingRow'] = CONSTANTS['canvas.numRows'];
 
     /* Predefine the variables we'll be using within this scope,
      * create the canvas element, grab the 2D context for that canvas
@@ -56,8 +58,8 @@ var Engine = (function(global) {
         ctx = canvas.getContext('2d'),
         lastTime;
 
-    canvas.width = constants['canvas.width'];
-    canvas.height = constants['canvas.height'];
+    canvas.width = CONSTANTS['canvas.width'];
+    canvas.height = CONSTANTS['canvas.height'];
     doc.body.appendChild(canvas);
 
     /* This function serves as the kickoff point for the game loop itself
@@ -88,7 +90,7 @@ var Engine = (function(global) {
          * function again as soon as the browser is able to draw another frame.
          */
         win.requestAnimationFrame(main);
-    };
+    }
 
     /* This function does some initial setup that should only occur once,
      * particularly setting the lastTime variable that is required for the
@@ -130,10 +132,10 @@ var Engine = (function(global) {
     /*  For every enemy, check to see if the player is in the same row. If so, check the distance
         between the enemy and the player. If they are within a given range, notify player of the
         "death," and reset the player's starting coordinates.*/
-    function checkCollisions()  {
-        allEnemies.forEach(function(enemy){
-            if (enemy.row == player.playerRow)  {
-                if (Math.abs(player.pixelX - enemy.x) < constants['enemy.dangerZone!']){
+    function checkCollisions() {
+        allEnemies.forEach(function(enemy) {
+            if (enemy.row == player.playerRow) {
+                if (Math.abs(player.pixelX - enemy.x) < CONSTANTS['enemy.dangerZone!']) {
                         confirm ("You are dead!");
                         player.reset();
                 }
@@ -152,16 +154,17 @@ var Engine = (function(global) {
          * for that particular row of the game level.
          */
         var rowImages = [
-                'images/water-block.png',   // Top row is water
-                'images/stone-block.png',   // Row 1 of 3 of stone
-                'images/stone-block.png',   // Row 2 of 3 of stone
-                'images/stone-block.png',   // Row 3 of 3 of stone
-                'images/grass-block.png',   // Row 1 of 2 of grass
-                'images/grass-block.png'    // Row 2 of 2 of grass
-            ],
-            numRows = constants['canvas.numRows'],
-            numCols = constants['canvas.numColumns'],
-            row, col;
+            'images/water-block.png',   // Top row is water
+            'images/stone-block.png',   // Row 1 of 3 of stone
+            'images/stone-block.png',   // Row 2 of 3 of stone
+            'images/stone-block.png',   // Row 3 of 3 of stone
+            'images/grass-block.png',   // Row 1 of 2 of grass
+            'images/grass-block.png'    // Row 2 of 2 of grass
+        ];
+        var numRows = CONSTANTS['canvas.numRows'];
+        var numCols = CONSTANTS['canvas.numColumns'];
+        var row;
+        var col;
 
         /* Loop through the number of rows and columns we've defined above
          * and, using the rowImages array, draw the correct image for that
@@ -176,7 +179,7 @@ var Engine = (function(global) {
                  * so that we get the benefits of caching these images, since
                  * we're using them over and over.
                  */
-                ctx.drawImage(Resources.get(rowImages[row]), col * constants['canvas.columnWidth'], row * constants['canvas.rowHeight']);
+                ctx.drawImage(Resources.get(rowImages[row]), col * CONSTANTS['canvas.columnWidth'], row * CONSTANTS['canvas.rowHeight']);
             }
         }
 
